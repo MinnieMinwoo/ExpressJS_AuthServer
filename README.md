@@ -5,3 +5,15 @@ For practice express.js
 - user CRUD using email auth
 - send to do list by user
 - refactoring to react code created by vanilla js
+
+# Project Stack
+- FrontEnd
+    - React
+    - Recoil
+    - Bootstrap
+    - Typescript
+- BackEnd
+   - Express.js
+   - Typescript
+
+# demonstration
