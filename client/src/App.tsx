@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import Auth from "./Auth";
 
 function App() {
   useEffect(() => {
@@ -10,7 +11,11 @@ function App() {
       })
       .catch((err) => console.log(err));
   });
-  return <div className="App">test</div>;
+  return (
+    <div className="App">
+      <Auth />
+    </div>
+  );
 }
 
 export default App;
