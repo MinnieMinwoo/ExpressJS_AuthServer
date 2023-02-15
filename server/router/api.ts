@@ -46,7 +46,7 @@ router.post("/signup", async (req, res) => {
     const query = `INSERT INTO userAccount VALUES ('${userData.email}', '${hashPassword}', '${salt}');`;
     try {
       await psql.query(query);
-      const acessToken = jwt.sign(
+      const accessToken = jwt.sign(
         {
           user_id: userData.email,
         },
@@ -64,8 +64,9 @@ router.post("/signup", async (req, res) => {
           expiresIn: "180 days",
         }
       );
-      res.json({ acessToken, refreshToken });
+      res.json({ accessToken, refreshToken });
     } catch (err) {
+      console.log(err);
       if (
         (err as Error)?.message ===
         `duplicate key value violates unique constraint "useraccount_un"`

@@ -1,7 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Auth from "./Auth";
 
 function App() {
+  const [islogin, setIsLogin] = useState("false");
+  const [email, setEmail] = useState("");
+
   useEffect(() => {
     fetch("./api")
       .then(async (response) => {
