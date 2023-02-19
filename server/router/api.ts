@@ -1,22 +1,21 @@
+import * as dotenv from "dotenv";
 import { randomBytes, pbkdf2 } from "crypto";
 import express from "express";
 import psql from "../psql";
 import jwt, { Secret } from "jsonwebtoken";
-import * as dotenv from "dotenv";
 
 dotenv.config();
 const router = express.Router();
 router.use(express.json());
 
-type UserData = {
+interface UserData {
   email: string;
   password: string;
-};
+}
 
-router.get("/", (req, res) => {
-  console.log("get request");
-  res.send({ test: "hi" });
-});
+interface ExistUserData extends UserData {
+  salt: string;
+}
 
 router.post("/signup", async (req, res) => {
   const { body } = req;
@@ -45,7 +44,7 @@ router.post("/signup", async (req, res) => {
     const hashPassword = key.toString("base64");
     const query = `INSERT INTO userAccount VALUES ('${userData.email}', '${hashPassword}', '${salt}');`;
     try {
-      await psql.query(query);
+      psql.query(query);
       const accessToken = jwt.sign(
         {
           user_id: userData.email,
@@ -59,7 +58,7 @@ router.post("/signup", async (req, res) => {
         {
           user_id: userData.email,
         },
-        process.env.AUTH_ACCESS_TOKEN as Secret,
+        process.env.AUTH_REFRESH_TOKEN as Secret,
         {
           expiresIn: "180 days",
         }
@@ -79,6 +78,45 @@ router.post("/signup", async (req, res) => {
   });
 });
 
-export default router;
+router.post("/signin", async (req, res) => {
+  console.log("signin request");
+  const { body } = req;
 
-//회원가입 테스트: http://localhost:3001/api/signup\?email\=test123@testmail.com\&password\=123124098234
+  if (!(body as UserData)?.email || !(body as UserData)?.password) {
+    res.status(400).send({ message: "Invalid user data" });
+    return;
+  }
+
+  const userData = body as UserData;
+  const queryExistData = `SELECT * FROM userAccount where email='${userData.email}'`;
+  const { password, salt } = (await psql.query(queryExistData)).rows[0] as any as ExistUserData;
+  console.log(salt);
+  pbkdf2(userData.password, salt, 445, 32, "sha512", async (err, key) => {
+    const hashPassword = key.toString("base64");
+    if (hashPassword === password) {
+      const accessToken = jwt.sign(
+        {
+          user_id: userData.email,
+        },
+        process.env.AUTH_ACCESS_TOKEN as Secret,
+        {
+          expiresIn: "24h",
+        }
+      );
+      const refreshToken = jwt.sign(
+        {
+          user_id: userData.email,
+        },
+        process.env.AUTH_REFRESH_TOKEN as Secret,
+        {
+          expiresIn: "180 days",
+        }
+      );
+      res.json({ accessToken, refreshToken });
+    } else {
+      res.status(400).send({ message: "Incorrect password" });
+    }
+  });
+});
+
+export default router;
