@@ -16,9 +16,6 @@ const Auth = () => {
     });
     const result = (await (await fetch(request)).json()) as any;
     console.log(result);
-    const { accessToken, refreshToken } = result;
-    document.cookie = `accessToken=${accessToken}; httpOnly`;
-    document.cookie = `refreshToken=${refreshToken}; httpOnly`;
   };
 
   const onLogin = async () => {
@@ -36,15 +33,27 @@ const Auth = () => {
     });
     const result = (await (await fetch(request)).json()) as any;
     console.log(result);
-    const { accessToken, refreshToken } = result;
-    document.cookie = `accessToken=${accessToken}; httpOnly`;
-    document.cookie = `refreshToken=${refreshToken}; httpOnly`;
   };
 
+  const onRequest = async () => {
+    const request = new Request("./api/request", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        data: "example",
+      }),
+    });
+    console.log(request);
+    const result = await fetch(request);
+    console.log(result);
+  };
   return (
     <div>
       <button onClick={onSignUp}>Submit Test</button>
       <button onClick={onLogin}>Login Test</button>
+      <button onClick={onRequest}>Request Test</button>
     </div>
   );
 };

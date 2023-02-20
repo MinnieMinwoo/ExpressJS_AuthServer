@@ -3,10 +3,12 @@ import { randomBytes, pbkdf2 } from "crypto";
 import express from "express";
 import psql from "../psql";
 import jwt, { Secret } from "jsonwebtoken";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const router = express.Router();
 router.use(express.json());
+router.use(cookieParser());
 
 interface UserData {
   email: string;
@@ -51,7 +53,7 @@ router.post("/signup", async (req, res) => {
         },
         process.env.AUTH_ACCESS_TOKEN as Secret,
         {
-          expiresIn: "24h",
+          expiresIn: "30m",
         }
       );
       const refreshToken = jwt.sign(
@@ -60,10 +62,13 @@ router.post("/signup", async (req, res) => {
         },
         process.env.AUTH_REFRESH_TOKEN as Secret,
         {
-          expiresIn: "180 days",
+          expiresIn: "7 days",
         }
       );
-      res.json({ accessToken, refreshToken });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+      });
+      res.json({ accessToken });
     } catch (err) {
       console.log(err);
       if (
@@ -112,11 +117,21 @@ router.post("/signin", async (req, res) => {
           expiresIn: "180 days",
         }
       );
+      res.cookie("accessToken", refreshToken, {
+        httpOnly: true,
+      });
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+      });
       res.json({ accessToken, refreshToken });
     } else {
       res.status(400).send({ message: "Incorrect password" });
     }
   });
+});
+
+router.post("/request", async (req, res) => {
+  console.log(req.cookies);
 });
 
 export default router;
