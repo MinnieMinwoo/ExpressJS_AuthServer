@@ -19,6 +19,9 @@ interface ExistUserData extends UserData {
   salt: string;
 }
 
+interface Token {
+  user_id: string;
+}
 router.post("/signup", async (req, res) => {
   const { body } = req;
 
@@ -44,9 +47,9 @@ router.post("/signup", async (req, res) => {
   const salt = randomBytes(32).toString("base64");
   pbkdf2(userData.password, salt, 445, 32, "sha512", async (err, key) => {
     const hashPassword = key.toString("base64");
-    const query = `INSERT INTO userAccount VALUES ('${userData.email}', '${hashPassword}', '${salt}');`;
+    const query = `INSERT INTO userAccount (email, password, salt) VALUES ('${userData.email}', '${hashPassword}', '${salt}');`;
     try {
-      psql.query(query);
+      await psql.query(query);
       const accessToken = jwt.sign(
         {
           user_id: userData.email,
@@ -95,7 +98,6 @@ router.post("/signin", async (req, res) => {
   const userData = body as UserData;
   const queryExistData = `SELECT * FROM userAccount where email='${userData.email}'`;
   const { password, salt } = (await psql.query(queryExistData)).rows[0] as any as ExistUserData;
-  console.log(salt);
   pbkdf2(userData.password, salt, 445, 32, "sha512", async (err, key) => {
     const hashPassword = key.toString("base64");
     if (hashPassword === password) {
@@ -117,21 +119,54 @@ router.post("/signin", async (req, res) => {
           expiresIn: "180 days",
         }
       );
-      res.cookie("accessToken", refreshToken, {
-        httpOnly: true,
-      });
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
       });
-      res.json({ accessToken, refreshToken });
+      res.json({ accessToken });
     } else {
       res.status(400).send({ message: "Incorrect password" });
     }
   });
 });
 
-router.post("/request", async (req, res) => {
-  console.log(req.cookies);
+router.get("/token", async (req, res) => {
+  console.log("token request");
+  const token = req.cookies.refreshToken;
+  try {
+    const decoded = jwt.verify(token, process.env.AUTH_REFRESH_TOKEN as Secret) as Token;
+    const email = decoded.user_id;
+    const queryExistData = `SELECT * FROM userAccount where email='${email}'`;
+    const accessToken = jwt.sign(
+      {
+        user_id: email,
+      },
+      process.env.AUTH_ACCESS_TOKEN as Secret,
+      {
+        expiresIn: "30m",
+      }
+    );
+    res.json({ accessToken });
+  } catch (error) {
+    res.status(401).send({ message: "Invalid Token" });
+  }
+});
+
+router.post("/submit/add", async (req, res) => {
+  let token = req.headers.authorization;
+  if (!token || typeof token !== "string") {
+    res.status(401).send({ message: "No AccessToken" });
+    return;
+  }
+  token = token.replace(/^Bearer\s+/, "");
+  console.log(token);
+  try {
+    const decoded = jwt.verify(token, process.env.AUTH_ACCESS_TOKEN as Secret);
+    console.log(decoded);
+    // TODO : ADD TODO LIST TO DATABASE
+    res.status(200).send({ message: "test" });
+  } catch (error) {
+    res.status(401).send({ message: "Invalid Token" });
+  }
 });
 
 export default router;

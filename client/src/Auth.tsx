@@ -1,10 +1,39 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Token } from "./Token";
 
-const Auth = () => {
-  const onSignUp = async () => {
-    const email = "test123@testmail.com";
-    const password = "test1234test1234test1234!";
-    const request = new Request("./api/signup", {
+interface Props {
+  isToken: boolean;
+  setToken: React.Dispatch<React.SetStateAction<Token>>;
+}
+export default function Auth({ isToken, setToken }: Props) {
+  const [toggle, setToggle] = useState(true);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const onClick = () => {
+    setToggle((prev) => !prev);
+  };
+
+  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const {
+      target: { name, value },
+    } = event;
+    switch (name) {
+      case "email":
+        setEmail(value);
+        break;
+      case "password":
+        setPassword(value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const onSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    const url = toggle ? "./api/signin" : "./api/signup";
+    const request = new Request(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -14,48 +43,33 @@ const Auth = () => {
         password: password,
       }),
     });
-    const result = (await (await fetch(request)).json()) as any;
-    console.log(result);
+    const { accessToken } = (await (await fetch(request)).json()) as { accessToken: string };
+    setToken(new Token(accessToken));
   };
 
-  const onLogin = async () => {
-    const email = "test123@testmail.com";
-    const password = "test1234test1234test1234!";
-    const request = new Request("./api/signin", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: email,
-        password: password,
-      }),
-    });
-    const result = (await (await fetch(request)).json()) as any;
-    console.log(result);
-  };
-
-  const onRequest = async () => {
-    const request = new Request("./api/request", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        data: "example",
-      }),
-    });
-    console.log(request);
-    const result = await fetch(request);
-    console.log(result);
-  };
   return (
-    <div>
-      <button onClick={onSignUp}>Submit Test</button>
-      <button onClick={onLogin}>Login Test</button>
-      <button onClick={onRequest}>Request Test</button>
+    <div hidden={isToken}>
+      <form onSubmit={onSubmit}>
+        <input
+          name="email"
+          type="email"
+          required
+          placeholder="email"
+          value={email}
+          onChange={onChange}
+        />
+        <input
+          name="password"
+          type="password"
+          required
+          placeholder="password"
+          autoComplete="off"
+          value={password}
+          onChange={onChange}
+        />
+        <input type="submit" value={toggle ? "Sign In" : "Sign Up"} />
+      </form>
+      <button onClick={onClick}>{toggle ? "Sign Up" : "Sign In"}</button>
     </div>
   );
-};
-
-export default Auth;
+}
