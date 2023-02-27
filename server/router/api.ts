@@ -136,6 +136,7 @@ router.get("/token", async (req, res) => {
     const decoded = jwt.verify(token, process.env.AUTH_REFRESH_TOKEN as Secret) as Token;
     const email = decoded.user_id;
     const queryExistData = `SELECT * FROM userAccount where email='${email}'`;
+    //TODO: Email verification
     const accessToken = jwt.sign(
       {
         user_id: email,
@@ -147,24 +148,47 @@ router.get("/token", async (req, res) => {
     );
     res.json({ accessToken });
   } catch (error) {
+    console.log(error);
     res.status(401).send({ message: "Invalid Token" });
   }
 });
 
-router.post("/submit/add", async (req, res) => {
+router.get("/todo", async (req, res) => {
+  console.log("todo get request");
   let token = req.headers.authorization;
   if (!token || typeof token !== "string") {
     res.status(401).send({ message: "No AccessToken" });
     return;
   }
   token = token.replace(/^Bearer\s+/, "");
-  console.log(token);
   try {
-    const decoded = jwt.verify(token, process.env.AUTH_ACCESS_TOKEN as Secret);
-    console.log(decoded);
-    // TODO : ADD TODO LIST TO DATABASE
-    res.status(200).send({ message: "test" });
+    const decoded = jwt.verify(token, process.env.AUTH_ACCESS_TOKEN as Secret) as Token;
+    const email = decoded.user_id;
+    const query = `SELECT * FROM todoList where createby='${email}';`;
+    const result = await psql.query(query);
+    res.json({ todoList: result.rows });
   } catch (error) {
+    console.log(error);
+    res.status(401).send({ message: "Invalid Token" });
+  }
+});
+
+router.post("/todo", async (req, res) => {
+  console.log("todo post request");
+  let token = req.headers.authorization;
+  if (!token || typeof token !== "string") {
+    res.status(401).send({ message: "No AccessToken" });
+    return;
+  }
+  token = token.replace(/^Bearer\s+/, "");
+  try {
+    const decoded = jwt.verify(token, process.env.AUTH_ACCESS_TOKEN as Secret) as Token;
+    const email = decoded.user_id;
+    const query = `INSERT INTO todoList (createby, content) VALUES ('${email}', '${req.body.data}');`;
+    await psql.query(query);
+    res.status(200).send({ message: "Upload Complete" });
+  } catch (error) {
+    console.log(error);
     res.status(401).send({ message: "Invalid Token" });
   }
 });
