@@ -186,10 +186,32 @@ router.post("/todo", async (req, res) => {
     const email = decoded.user_id;
     const query = `INSERT INTO todoList (createby, content) VALUES ('${email}', '${req.body.data}');`;
     await psql.query(query);
-    res.status(200).send({ message: "Upload Complete" });
+    const idQuery = `SELECT * FROM todoList WHERE createby = '${email}' AND content='${req.body.data}';`;
+    const result = (await psql.query(idQuery)).rows;
+    res.json(result[result.length - 1]);
   } catch (error) {
     console.log(error);
     res.status(401).send({ message: "Invalid Token" });
+  }
+});
+
+router.delete("/todo", async (req, res) => {
+  console.log("todo delete request");
+  let token = req.headers.authorization;
+  if (!token || typeof token !== "string") {
+    res.status(401).send({ message: "No AccessToken" });
+    return;
+  }
+  token = token.replace(/^Bearer\s+/, "");
+  try {
+    const decoded = jwt.verify(token, process.env.AUTH_ACCESS_TOKEN as Secret) as Token;
+    const email = decoded.user_id;
+    const query = `DELETE FROM todoList WHERE createby = '${email}' AND id='${req.body.todoID}';`;
+    await psql.query(query);
+    res.status(200).send({ message: "DELETE Complete" });
+  } catch (error) {
+    console.log(error);
+    res.status(401).send({ message: "Invalid Token or Invalid Data" });
   }
 });
 

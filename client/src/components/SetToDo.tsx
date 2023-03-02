@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { Token } from "../Token";
 
+interface ToDo {
+  content: string;
+  id: string;
+}
+
 interface Props {
   accessToken: Token;
   refreshToken: () => Promise<void>;
+  setList: React.Dispatch<React.SetStateAction<ToDo[]>>;
 }
 
-function SetToDo({ accessToken, refreshToken }: Props) {
+function SetToDo({ accessToken, refreshToken, setList }: Props) {
   const [value, setValue] = useState("");
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -30,10 +36,11 @@ function SetToDo({ accessToken, refreshToken }: Props) {
       }),
     });
     try {
-      const result = await fetch(request);
-      console.log(result);
+      const todoData = (await (await fetch(request)).json()) as ToDo;
+      setList((prev) => [...prev, todoData]);
     } catch (error) {
       if (!(error instanceof Error)) return;
+      console.log(error);
       if (error.message === "No AccessToken" || error.message === "Invalid Token") {
         try {
           await refreshToken();
@@ -42,7 +49,8 @@ function SetToDo({ accessToken, refreshToken }: Props) {
           console.log(error);
         }
       }
-      console.log(error);
+    } finally {
+      setValue("");
     }
   };
 

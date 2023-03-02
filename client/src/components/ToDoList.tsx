@@ -6,11 +6,15 @@ interface ToDo {
   id: string;
 }
 
-function ToDoList({ accessToken }: { accessToken: Token }) {
-  const [list, setList] = useState<ToDo[]>([]);
+interface Props {
+  accessToken: Token;
+  list: ToDo[];
+  setList: React.Dispatch<React.SetStateAction<ToDo[]>>;
+}
+
+function ToDoList({ accessToken, list, setList }: Props) {
   useEffect(() => {
     if (accessToken.get()) getTodoList();
-    // accessToken이 있을때 데이터 페칭 시도
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken]);
 
@@ -32,10 +36,38 @@ function ToDoList({ accessToken }: { accessToken: Token }) {
     }
   };
 
+  const onDelete = async (id: string) => {
+    const url = "./api/todo";
+    const request = new Request(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken.get()}`,
+      },
+      body: JSON.stringify({
+        todoID: id,
+      }),
+    });
+    try {
+      await (await fetch(request)).json();
+      const filteredList = list.filter((element) => {
+        return element.id !== id;
+      });
+      setList(filteredList);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <ul>
       {list.map((todo) => {
-        return <li key={todo.id}>{todo.content}</li>;
+        return (
+          <div key={todo.id}>
+            <li>{todo.content}</li>
+            <button onClick={() => onDelete(todo.id)}>X</button>
+          </div>
+        );
       })}
     </ul>
   );

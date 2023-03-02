@@ -5,8 +5,14 @@ import Clock from "./Clock";
 import SetToDo from "./components/SetToDo";
 import ToDoList from "./components/ToDoList";
 
+interface ToDo {
+  content: string;
+  id: string;
+}
+
 function App() {
   const [accessToken, setAccessToken] = useState<Token>(new Token(""));
+  const [list, setList] = useState<ToDo[]>([]);
 
   useEffect(() => {
     onRefreshToken();
@@ -34,13 +40,13 @@ function App() {
       <Auth isToken={!!accessToken.get()} setToken={setAccessToken} />
       <section>
         <h1 hidden={!accessToken.get()}>Hello</h1>
-        <SetToDo accessToken={accessToken} refreshToken={onRefreshToken} />
+        <SetToDo accessToken={accessToken} refreshToken={onRefreshToken} setList={setList} />
       </section>
       <main>
         <div></div>
         <div></div>
       </main>
-      <ToDoList accessToken={accessToken} />
+      <ToDoList accessToken={accessToken} list={list} setList={setList} />
     </div>
   );
 }
