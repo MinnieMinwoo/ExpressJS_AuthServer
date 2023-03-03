@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./Clock.css";
 
 export default function Clock() {
   const [clock, setClock] = useState("00:00");
@@ -15,5 +16,5 @@ export default function Clock() {
     setInterval(SetTime, 1000);
   }, []);
 
-  return <h2>{clock}</h2>;
+  return <h2 className="Clock">{clock}</h2>;
 }

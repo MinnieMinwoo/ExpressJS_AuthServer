@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Token } from "./Token";
-import Auth from "./Auth";
-import Clock from "./Clock";
+import Auth from "./components/Auth";
+import Clock from "./components/Clock";
+import SetNickName from "./components/SetNickname";
 import SetToDo from "./components/SetToDo";
 import ToDoList from "./components/ToDoList";
+import Favorite from "./components/Favorite";
+import Weather from "./components/Weather";
+import "./App.css";
 
 interface ToDo {
   content: string;
@@ -39,12 +43,14 @@ function App() {
       <Clock />
       <Auth isToken={!!accessToken.get()} setToken={setAccessToken} />
       <section>
-        <h1 hidden={!accessToken.get()}>Hello</h1>
+        <div hidden={!accessToken.get()}>
+          <SetNickName />
+        </div>
         <SetToDo accessToken={accessToken} refreshToken={onRefreshToken} setList={setList} />
       </section>
       <main>
-        <div></div>
-        <div></div>
+        <Favorite />
+        <Weather />
       </main>
       <ToDoList accessToken={accessToken} list={list} setList={setList} />
     </div>

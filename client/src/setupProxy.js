@@ -8,4 +8,16 @@ module.exports = (app) => {
       secure: false,
     })
   );
+  app.use(
+    createProxyMiddleware("/advice", {
+      target: "https://api.adviceslip.com",
+      changeOrigin: true,
+    })
+  );
+  app.use(
+    createProxyMiddleware("/weather", {
+      target: "https://api.openweathermap.org/data/2.5/",
+      changeOrigin: true,
+    })
+  );
 };
