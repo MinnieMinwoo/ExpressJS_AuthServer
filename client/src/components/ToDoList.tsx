@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Token } from "../Token";
+import "./ToDoList.css";
 
 interface ToDo {
   content: string;
@@ -60,7 +61,7 @@ function ToDoList({ accessToken, list, setList }: Props) {
   };
 
   return (
-    <ul>
+    <ul className="ToDoList">
       {list.map((todo) => {
         return (
           <div key={todo.id}>

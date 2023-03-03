@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Token } from "../Token";
+import "./SetToDo.css";
 
 interface ToDo {
   content: string;
@@ -24,6 +25,7 @@ function SetToDo({ accessToken, refreshToken, setList }: Props) {
 
   const onToDoSubmit = async (event: React.MouseEvent) => {
     event.preventDefault();
+    if (value === "") return;
     const url = "./api/todo";
     const request = new Request(url, {
       method: "POST",
@@ -55,13 +57,14 @@ function SetToDo({ accessToken, refreshToken, setList }: Props) {
   };
 
   return (
-    <form>
+    <form className="SetToDo">
       <input
         type="text"
         value={value}
         onChange={onChange}
         maxLength={100}
         placeholder="Write a To Do and press Enter"
+        required
       />
       <button onClick={onToDoSubmit}>Submit Test</button>
     </form>

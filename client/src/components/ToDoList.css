@@ -1,0 +1,24 @@
+.ToDoList {
+  list-style: none;
+  margin-top: 20px;
+  padding: 0;
+}
+
+.ToDoList > div {
+  display: flex;
+  justify-content: space-between;
+  width: 60vw;
+  font-size: 25px;
+}
+
+.ToDoList > div > li {
+  display: inline-block;
+  flex-grow: 1;
+}
+
+.ToDoList > div > button {
+  background-color: paleturquoise;
+  flex-basis: 60px;
+  height: 40px;
+  border-radius: 20px;
+}

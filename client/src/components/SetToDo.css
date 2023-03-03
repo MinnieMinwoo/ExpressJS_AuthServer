@@ -1,0 +1,28 @@
+.SetToDo {
+  width: 60vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+.SetToDo > input {
+  flex-grow: 1;
+  margin-right: 40px;
+  font-size: 30px;
+  outline: none;
+  border-bottom: 2px solid #555;
+}
+
+.SetToDo > input:hover {
+  border-bottom: 2px solid paleturquoise;
+}
+
+.SetToDo > button {
+  background-color: paleturquoise;
+  flex-basis: 100px;
+  height: 60px;
+  border-radius: 30px;
+}
+
+.SetToDo > button:hover {
+  background-color: aquamarine;
+}

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import "./Weather.css";
 
 interface Weather {
   city: string;
