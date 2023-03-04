@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Token } from "./Token";
 import Auth from "./components/Auth";
 import Clock from "./components/Clock";
-import SetNickName from "./components/SetNickname";
+import UserInfo from "./components/UserInfo";
 import SetToDo from "./components/SetToDo";
 import ToDoList from "./components/ToDoList";
 import Favorite from "./components/Favorite";
@@ -44,9 +44,14 @@ function App() {
       <Auth isToken={!!accessToken.get()} setToken={setAccessToken} />
       <section>
         <div hidden={!accessToken.get()}>
-          <SetNickName />
+          <UserInfo accessToken={accessToken} setAccessToken={setAccessToken} />
         </div>
-        <SetToDo accessToken={accessToken} refreshToken={onRefreshToken} setList={setList} />
+        <SetToDo
+          isHidden={!accessToken.get()}
+          accessToken={accessToken}
+          refreshToken={onRefreshToken}
+          setList={setList}
+        />
       </section>
       <main>
         <Favorite />

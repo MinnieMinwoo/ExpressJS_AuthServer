@@ -1,0 +1,43 @@
+.Auth {
+  width: 60vw;
+  margin-bottom: 20px;
+}
+
+.Auth > form {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  margin-bottom: 20px;
+}
+
+.Auth > form > .Auth_Input {
+  height: 60px;
+  flex-grow: 1;
+  margin-right: 20px;
+  font-size: 20px;
+  outline: none;
+  border-bottom: 2px solid #555;
+}
+
+.Auth > form > .Auth_Input:hover {
+  border-bottom: 2px solid skyblue;
+}
+
+.Auth > form > .Auth_Submit {
+  flex-basis: 100px;
+  height: 60px;
+  border-radius: 30px;
+  background-color: skyblue;
+}
+
+.Auth > form > .Auth_Submit:hover {
+  background-color: lightskyblue;
+}
+
+.Auth > button {
+  width: 100px;
+  height: 40px;
+  border-radius: 20px;
+  float: right;
+  background-color: cornflowerblue;
+}

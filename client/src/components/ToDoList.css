@@ -1,7 +1,10 @@
 .ToDoList {
   list-style: none;
   margin-top: 20px;
-  padding: 0;
+  border-right: 2px solid skyblue;
+  padding: 0 20px;
+  max-height: 200px;
+  overflow: scroll;
 }
 
 .ToDoList > div {
@@ -9,6 +12,7 @@
   justify-content: space-between;
   width: 60vw;
   font-size: 25px;
+  margin-bottom: 10px;
 }
 
 .ToDoList > div > li {
@@ -17,7 +21,7 @@
 }
 
 .ToDoList > div > button {
-  background-color: paleturquoise;
+  background-color: cornflowerblue;
   flex-basis: 60px;
   height: 40px;
   border-radius: 20px;

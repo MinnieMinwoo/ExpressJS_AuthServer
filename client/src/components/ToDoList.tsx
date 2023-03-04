@@ -62,7 +62,7 @@ function ToDoList({ accessToken, list, setList }: Props) {
 
   return (
     <ul className="ToDoList">
-      {list.map((todo) => {
+      {list.reverse().map((todo) => {
         return (
           <div key={todo.id}>
             <li>{todo.content}</li>

@@ -1,0 +1,18 @@
+.SetNickName {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.SetNickName > h1 {
+  font-weight: bold;
+  font-size: 50px;
+}
+
+.SetNickName > button {
+  background-color: cornflowerblue;
+  flex-basis: 100px;
+  height: 60px;
+  border-radius: 30px;
+}

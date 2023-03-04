@@ -8,12 +8,13 @@ interface ToDo {
 }
 
 interface Props {
+  isHidden: boolean;
   accessToken: Token;
   refreshToken: () => Promise<void>;
   setList: React.Dispatch<React.SetStateAction<ToDo[]>>;
 }
 
-function SetToDo({ accessToken, refreshToken, setList }: Props) {
+function SetToDo({ isHidden, accessToken, refreshToken, setList }: Props) {
   const [value, setValue] = useState("");
 
   const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +58,7 @@ function SetToDo({ accessToken, refreshToken, setList }: Props) {
   };
 
   return (
-    <form className="SetToDo">
+    <form className="SetToDo" hidden={isHidden}>
       <input
         type="text"
         value={value}

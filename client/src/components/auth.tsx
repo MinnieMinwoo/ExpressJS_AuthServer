@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Token } from "../Token";
+import "./Auth.css";
 
 interface Props {
   isToken: boolean;
@@ -48,9 +49,10 @@ export default function Auth({ isToken, setToken }: Props) {
   };
 
   return (
-    <div hidden={isToken}>
+    <div hidden={isToken} className="Auth">
       <form onSubmit={onSubmit}>
         <input
+          className="Auth_Input"
           name="email"
           type="email"
           required
@@ -59,6 +61,7 @@ export default function Auth({ isToken, setToken }: Props) {
           onChange={onChange}
         />
         <input
+          className="Auth_Input"
           name="password"
           type="password"
           required
@@ -67,7 +70,7 @@ export default function Auth({ isToken, setToken }: Props) {
           value={password}
           onChange={onChange}
         />
-        <input type="submit" value={toggle ? "Sign In" : "Sign Up"} />
+        <input className="Auth_Submit" type="submit" value={toggle ? "Sign In" : "Sign Up"} />
       </form>
       <button onClick={onClick}>{toggle ? "Sign Up" : "Sign In"}</button>
     </div>

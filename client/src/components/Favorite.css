@@ -1,5 +1,8 @@
 .Favorite {
   font-weight: 600;
+  width: 60vw;
+  text-align: center;
   font-size: 30px;
   margin-top: 20px;
+  white-space: pre-line;
 }

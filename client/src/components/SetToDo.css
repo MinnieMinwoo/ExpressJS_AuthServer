@@ -13,16 +13,16 @@
 }
 
 .SetToDo > input:hover {
-  border-bottom: 2px solid paleturquoise;
+  border-bottom: 2px solid skyblue;
 }
 
 .SetToDo > button {
-  background-color: paleturquoise;
+  background-color: skyblue;
   flex-basis: 100px;
   height: 60px;
   border-radius: 30px;
 }
 
 .SetToDo > button:hover {
-  background-color: aquamarine;
+  background-color: lightskyblue;
 }
